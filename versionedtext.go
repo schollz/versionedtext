@@ -61,7 +61,7 @@ func (vt *VersionedText) GetCurrent() string {
 // Update adds a new version to the current versions
 func (vt *VersionedText) Update(newText string) {
 	// check for changes
-	if vt.GetCurrent() == newText {
+	if vt.CurrentText == newText {
 		return
 	}
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func BenchmarkUpdate(b *testing.B) {
@@ -52,8 +53,11 @@ func BenchmarkRebuild10000thof10000(b *testing.B) {
 
 func TestGeneral(t *testing.T) {
 	d := NewVersionedText("A word")
+	time.Sleep(1 * time.Millisecond)
 	d.Update("A word and adding something at the end")
+	time.Sleep(1 * time.Millisecond)
 	d.Update("A (deleted) and adding something at the end, with another addition")
+	time.Sleep(1 * time.Millisecond)
 
 	// Test getting a snapshot
 	snapshots := d.GetSnapshots()
