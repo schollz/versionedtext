@@ -86,8 +86,8 @@ func (vt *VersionedText) GetSnapshots() []int64 {
 
 // GetMajorSnapshots returns a sorted list of integers which
 // represent timestamps for each snapshot, where snapshots
-// must be at least 1 minute apart
-func (vt *VersionedText) GetMajorSnapshots() []int64 {
+// must be at least the number of specified seconds apart.
+func (vt *VersionedText) GetMajorSnapshots(seconds int64) []int64 {
 	keys := vt.GetSnapshots()
 	newKeys := make([]int64, len(keys))
 	newKeysI := 0
@@ -100,7 +100,7 @@ func (vt *VersionedText) GetMajorSnapshots() []int64 {
 			newKeysI++
 			continue
 		}
-		if key-keys[i-1] > 60000000000 {
+		if key-keys[i-1] > seconds*1000000000 {
 			newKeys[newKeysI] = key
 			newKeysI++
 		}

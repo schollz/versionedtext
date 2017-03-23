@@ -53,11 +53,11 @@ func BenchmarkRebuild10000thof10000(b *testing.B) {
 
 func TestGeneral(t *testing.T) {
 	d := NewVersionedText("A word")
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(2 * time.Second)
 	d.Update("A word and adding something at the end")
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	d.Update("A (deleted) and adding something at the end, with another addition")
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	// Test getting a snapshot
 	snapshots := d.GetSnapshots()
@@ -72,8 +72,8 @@ func TestGeneral(t *testing.T) {
 		t.Errorf("Did not reconstruct properly")
 	}
 
-	majorSnapshots := d.GetMajorSnapshots()
-	if len(majorSnapshots) != 1 && majorSnapshots[0] != snapshots[len(snapshots)-1] {
+	majorSnapshots := d.GetMajorSnapshots(1)
+	if len(majorSnapshots) != 2 && majorSnapshots[0] != snapshots[1] {
 		t.Errorf("Should only have one snapshot: %v", majorSnapshots)
 	}
 
