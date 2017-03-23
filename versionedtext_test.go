@@ -61,12 +61,20 @@ func TestGeneral(t *testing.T) {
 
 	// Test getting a snapshot
 	snapshots := d.GetSnapshots()
+	if len(snapshots) != 3 {
+		t.Errorf("Should have 3 snapshots: %v", snapshots)
+	}
 	previousText, err := d.GetPreviousByTimestamp(snapshots[1])
 	if err != nil {
 		t.Error(err)
 	}
 	if previousText != "A word and adding something at the end" {
 		t.Errorf("Did not reconstruct properly")
+	}
+
+	majorSnapshots := d.GetMajorSnapshots()
+	if len(majorSnapshots) != 1 && majorSnapshots[0] != snapshots[len(snapshots)-1] {
+		t.Errorf("Should only have one snapshot: %v", majorSnapshots)
 	}
 
 	// Test putting them in a struct and marshaling
