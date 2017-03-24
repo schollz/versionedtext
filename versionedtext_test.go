@@ -51,6 +51,50 @@ func BenchmarkRebuild10000thof10000(b *testing.B) {
 	}
 }
 
+func BenchmarkMajorChangeSums(b *testing.B) {
+	d := NewVersionedText("A word")
+	time.Sleep(100 * time.Millisecond)
+	d.Update("A word and adding something at the end")
+	time.Sleep(2 * time.Second)
+	d.Update("A word and at the end")
+	time.Sleep(100 * time.Millisecond)
+	d.Update("A at the end of this")
+	time.Sleep(2 * time.Second)
+	d.Update(" the something here end of this another here")
+	time.Sleep(1 * time.Second)
+	d.Update("")
+	time.Sleep(100 * time.Millisecond)
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		d.GetMajorSnapshotsAndChangeSums(1)
+	}
+}
+
+func TestChangeSums(t *testing.T) {
+	d := NewVersionedText("A word")
+	time.Sleep(100 * time.Millisecond)
+	d.Update("A word and adding something at the end")
+	time.Sleep(2 * time.Second)
+	d.Update("A word and at the end")
+	time.Sleep(100 * time.Millisecond)
+	d.Update("A at the end of this")
+	time.Sleep(2 * time.Second)
+	d.Update(" the something here end of this another here")
+	time.Sleep(1 * time.Second)
+	d.Update("")
+	time.Sleep(100 * time.Millisecond)
+
+	changeSums := d.GetChangeSums()
+	if changeSums[2] != -17 {
+		t.Errorf("Changesums: %v", changeSums)
+	}
+	majorSnapshots, majorChangeSums := d.GetMajorSnapshotsAndChangeSums(1)
+	if len(majorSnapshots) != 3 || len(majorChangeSums) != 3 {
+		t.Errorf("Major change sums: %v\nMajor snapshots: %v", majorChangeSums, majorSnapshots)
+	}
+}
+
 func TestGeneral(t *testing.T) {
 	d := NewVersionedText("A word")
 	time.Sleep(2 * time.Second)

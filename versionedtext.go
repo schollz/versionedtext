@@ -2,6 +2,8 @@ package versionedtext
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/sergi/go-diff/diffmatchpatch"
@@ -106,6 +108,53 @@ func (vt *VersionedText) GetMajorSnapshots(seconds int64) []int64 {
 		}
 	}
 	return newKeys[0:newKeysI]
+}
+
+func (vt *VersionedText) GetMajorSnapshotsAndChangeSums(seconds int64) ([]int64, []int) {
+	keys := vt.GetSnapshots()
+	changeSums := vt.GetChangeSums()
+
+	majorChangeSums := make([]int, len(keys))
+	newKeys := make([]int64, len(keys))
+	newKeysI := 0
+	cumulativeSum := 0
+	for i, key := range keys {
+		cumulativeSum = cumulativeSum + changeSums[i]
+		if i == 0 && len(keys) > 1 {
+			continue
+		}
+		if i == len(keys)-1 {
+			newKeys[newKeysI] = key
+			majorChangeSums[newKeysI] = cumulativeSum
+			cumulativeSum = 0
+			newKeysI++
+			continue
+		}
+		if key-keys[i-1] > seconds*1000000000 {
+			majorChangeSums[newKeysI] = cumulativeSum
+			newKeys[newKeysI] = key
+			cumulativeSum = 0
+			newKeysI++
+		}
+	}
+	return newKeys[0:newKeysI], majorChangeSums[0:newKeysI]
+}
+
+func (vt *VersionedText) GetChangeSums() []int {
+	keys := vt.GetSnapshots()
+	changeSums := make([]int, len(keys))
+	for i, key := range keys {
+		changeSums[i] = 0
+		for _, val := range strings.Split(vt.Diffs[key], "\t") {
+			if val[0:1] == "-" {
+				a, _ := strconv.Atoi(val[1:])
+				changeSums[i] = changeSums[i] - a
+			} else if val[0:1] == "+" {
+				changeSums[i] = changeSums[i] + len(val[1:])
+			}
+		}
+	}
+	return changeSums
 }
 
 // GetPreviousByTimestamp uses the diffs to rebuild to the specified snapshot
