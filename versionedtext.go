@@ -92,7 +92,7 @@ func (vt *VersionedText) GetMajorSnapshots(seconds int64) []int64 {
 	newKeys := make([]int64, len(keys))
 	newKeysI := 0
 	for i, key := range keys {
-		if i == 0 {
+		if i == 0 && len(keys) > 1 {
 			continue
 		}
 		if i == len(keys)-1 {
