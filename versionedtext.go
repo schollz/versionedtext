@@ -60,6 +60,20 @@ func (vt *VersionedText) GetCurrent() string {
 	return vt.CurrentText
 }
 
+func (vt *VersionedText) NumEdits() int {
+	return len(vt.Diffs)
+}
+
+func (vt *VersionedText) LastEditTime() int64 {
+	max := int64(0)
+	for key := range vt.Diffs {
+		if key > max {
+			max = key
+		}
+	}
+	return max
+}
+
 // Update adds a new version to the current versions
 func (vt *VersionedText) Update(newText string) {
 	// check for changes
