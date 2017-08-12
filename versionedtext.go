@@ -199,7 +199,9 @@ func (vt *VersionedText) GetPreviousByTimestamp(timestamp int64) (string, error)
 
 // GetPreviousByIndex returns a snapshot based on the index
 func (vt *VersionedText) GetPreviousByIndex(idx int) (string, error) {
-
+	if vt.NumEdits() == 0 {
+		return vt.GetCurrent(), nil
+	}
 	// check inputs
 	if 0 > idx {
 		return "", fmt.Errorf("Index most be positive integer")
