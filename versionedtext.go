@@ -22,6 +22,7 @@ func NewVersionedText(text string) VersionedText {
 	return data
 }
 
+// diffRebuildtexts will use the patches to rebuild the text
 func (vt *VersionedText) diffRebuildtexts(Diffs []diffmatchpatch.Diff) []string {
 	text := []string{"", ""}
 	for _, diff := range Diffs {
@@ -35,6 +36,7 @@ func (vt *VersionedText) diffRebuildtexts(Diffs []diffmatchpatch.Diff) []string 
 	return text
 }
 
+// rebuildTextsToDiffN will use patches to build the text to a certain point
 func (vt *VersionedText) rebuildTextsToDiffN(timestamp int64, snapshots []int64) (string, error) {
 	dmp := diffmatchpatch.New()
 	lastText := ""
@@ -60,10 +62,12 @@ func (vt *VersionedText) GetCurrent() string {
 	return vt.CurrentText
 }
 
+// NumEdits returns the number of edits
 func (vt *VersionedText) NumEdits() int {
 	return len(vt.Diffs)
 }
 
+// LastEditTime returns the last time it was edited
 func (vt *VersionedText) LastEditTime() int64 {
 	max := int64(0)
 	for key := range vt.Diffs {
@@ -124,6 +128,8 @@ func (vt *VersionedText) GetMajorSnapshots(seconds int64) []int64 {
 	return newKeys[0:newKeysI]
 }
 
+// GetMajorSnapshotsAndChangeSums returns the major snapshots timestamps and the changesums
+// as two arrays
 func (vt *VersionedText) GetMajorSnapshotsAndChangeSums(seconds int64) ([]int64, []int) {
 	keys := vt.GetSnapshots()
 	changeSums := vt.GetChangeSums()
@@ -154,6 +160,7 @@ func (vt *VersionedText) GetMajorSnapshotsAndChangeSums(seconds int64) ([]int64,
 	return newKeys[0:newKeysI], majorChangeSums[0:newKeysI]
 }
 
+// GetChangeSums returns the length of each change
 func (vt *VersionedText) GetChangeSums() []int {
 	keys := vt.GetSnapshots()
 	changeSums := make([]int, len(keys))

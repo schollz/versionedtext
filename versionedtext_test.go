@@ -2,10 +2,24 @@ package versionedtext
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"testing"
 	"time"
 )
+
+func ExampleNewVersionedText() {
+	d := NewVersionedText("The dog jumped over the fence.")
+	d.Update("The cat jumped over the fence.")
+	fmt.Println(d.GetPreviousByIndex(0))
+	fmt.Println(d.GetPreviousByIndex(1))
+	fmt.Println(d.NumEdits())
+	fmt.Println(d.GetChangeSums())
+	// Output: The dog jumped over the fence. <nil>
+	// The cat jumped over the fence. <nil>
+	// 2
+	// [30 0]
+}
 
 func BenchmarkUpdate(b *testing.B) {
 	d := NewVersionedText("A word")
