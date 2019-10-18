@@ -11,8 +11,8 @@ import (
 
 // VersionedText is the main container for the diff functions
 type VersionedText struct {
-	CurrentText string
-	Diffs       map[int64]string
+	CurrentText string `json:"currentText,omitempty"`
+	Diffs       map[int64]string `json:"diffs,omitempty"`
 }
 
 // NewVersionedText returns a new VersionedText object
